@@ -1,7 +1,10 @@
-import App from './App.svelte'
+import App from "./App.svelte";
+import { getRSAkey } from "./lib/getRSAkey";
 
-const app = new App({
-  target: document.getElementById('app')
-})
-
-export default app
+const appEl = document.getElementById("app");
+getRSAkey().then(() => {
+  appEl.innerHTML = "";
+  const app = new App({
+    target: appEl,
+  });
+});
