@@ -8,3 +8,8 @@ getRSAkey().then(() => {
     target: appEl,
   });
 });
+
+
+if (window.tuwanNapi) {
+  console.log('naapi====',window.tuwanNapi);
+}

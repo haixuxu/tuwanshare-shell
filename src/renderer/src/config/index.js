@@ -46,6 +46,20 @@ export const ChatConfig = {
     YSD_APP_KEY : isChatTest ? "4059144a3ace4a23a351ca3f96e6693d" : "6166c2e4e9404ab8826db07406de1fde",
 }
 
+let localAppId = window.localStorage.getItem('appId') || '';
+
+export const RTC_CONFIG = {
+  enableSDKLogging: true,
+  enableSDKDebugLogging: false,
+  // Get your own App ID at https://dashboard.agora.io/
+  appId: localAppId,
+  // Please refer to https://docs.agora.io/en/Agora%20Platform/token
+  token: '',
+  channelId: 'testdcg',
+  uid: 0,
+  logFilePath: '',
+};
+
 
 
 export let ChatUrls = {

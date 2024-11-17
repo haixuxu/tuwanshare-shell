@@ -10,7 +10,8 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      partition: "persist:diandianuser", // 持久化分区，数据会存储到磁盘
+      partition: "persist:diandianuser", // 持久化分区，数据会存储到磁盘,
+      preload: path.join(__dirname, 'preload.js') // 预加载脚本
     },
   });
 
