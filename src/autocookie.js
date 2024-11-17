@@ -1,24 +1,28 @@
-const { session } = require('electron');
-
+const { session } = require("electron");
 // 获取自定义会话分区
-const customSession = session.fromPartition('persist:diandianuser');
+const customSession = session.fromPartition("persist:diandianuser");
+
 
 // 拦截请求，自动附加 Cookie
 customSession.webRequest.onBeforeSendHeaders((details, callback) => {
-  // 获取当前请求的域名
-  const url = new URL(details.url);
-  const domain = url.origin;
+  const baseUrl = getBaseUrl(details.url);
 
-  // 获取存储的 Cookie
-  customSession.cookies.get({ url: domain })
-    .then((cookies) => {
+  if (!/tuwan.com/.test(baseUrl)) {
+    callback({ requestHeaders: details.requestHeaders });
+    return;
+  }
+
+  customSession.cookies.get({ url: baseUrl })
+    .then(cookies => {
       const cookieHeader = cookies.map(c => `${c.name}=${c.value}`).join('; ');
       if (cookieHeader) {
-        details.requestHeaders['Cookie'] = cookieHeader; // 设置请求头中的 Cookie
+        details.requestHeaders['Cookie'] = cookieHeader; // 设置 Cookie 头
       }
+      console.log("=====sendcookie==", baseUrl, " \ncookie:", cookieHeader);
+
       callback({ requestHeaders: details.requestHeaders });
     })
-    .catch((error) => {
+    .catch(error => {
       console.error('Error fetching cookies:', error);
       callback({ requestHeaders: details.requestHeaders });
     });
@@ -26,27 +30,79 @@ customSession.webRequest.onBeforeSendHeaders((details, callback) => {
 
 // 拦截响应，自动存储 Cookie
 customSession.webRequest.onHeadersReceived((details, callback) => {
-  const setCookieHeaders = details.responseHeaders['Set-Cookie'] || [];
   const url = details.url;
+  const baseUrl = getBaseUrl(details.url);
+  if (!/tuwan.com/.test(baseUrl)) {
+    callback({ responseHeaders: details.responseHeaders });
+    return;
+  }
+  const setCookieHeaders =
+    details.responseHeaders["Set-Cookie"] ||
+    details.responseHeaders["set-cookie"] ||
+    [];
 
-  // 解析并存储 Cookie
+  console.log("=====readcookie==", baseUrl, " \ncookie:", setCookieHeaders);
+
   setCookieHeaders.forEach((cookieString) => {
-    customSession.cookies.set({
-      url,
-      name: extractCookieName(cookieString),
-      value: extractCookieValue(cookieString),
-      // 解析其他属性（如 Secure、HttpOnly 等）
-    }).catch((error) => console.error('Error setting cookie:', error));
+    const cookie = parseSetCookie(cookieString, baseUrl);
+    console.log('parsecookie=====',cookieString,baseUrl);
+    if (cookie) {
+        console.log('1111111====',cookie);
+      if (cookie.value === "") {
+        // 如果 Cookie 没有值，删除 Cookie
+        console.log("remove cookie====",cookie.url,cookie.name);
+        customSession.cookies
+          .remove(cookie.url, cookie.name)
+          .catch((error) => console.error("Error removing cookie:", error));
+      } else {
+        // 设置新 Cookie
+        customSession.cookies
+          .set(cookie)
+          .catch((error) => console.error("Error setting cookie:", error));
+      }
+    }
   });
 
   callback({ responseHeaders: details.responseHeaders });
 });
 
-// Helper functions for parsing Cookie strings
-function extractCookieName(cookieString) {
-  return cookieString.split('=')[0].trim();
+// Helper function: Parse Set-Cookie string into a Cookie object
+function parseSetCookie(cookieString, url) {
+  const parts = cookieString.split(";").map((part) => part.trim());
+  const [name, value] = parts[0].split("=");
+
+  if (!name) {
+    return null;
+  }
+
+  const cookie = {
+    url, // Default to the full URL if domain is not explicitly set
+    name,
+    value,
+  };
+
+  // Parse additional attributes
+  parts.slice(1).forEach((part) => {
+    const [key, val] = part.split("=").map((p) => p.trim().toLowerCase());
+    if (key === "domain") {
+      cookie.domain = val.startsWith(".") ? val : `.${val}`; // Ensure domain starts with `.`
+      //   cookie.url = `http${cookie.secure ? "s" : ""}://${cookie.domain}`;
+    } else if (key === "path") {
+      cookie.path = val;
+    } else if (key === "secure") {
+      cookie.secure = true;
+    } else if (key === "httponly") {
+      cookie.httpOnly = true;
+    } else if (key === "expires") {
+      cookie.expirationDate = new Date(val).getTime() / 1000;
+    }
+  });
+
+  return cookie;
 }
 
-function extractCookieValue(cookieString) {
-  return cookieString.split('=')[1].split(';')[0].trim();
-}
+
+function getBaseUrl(url) {
+    const { protocol, host, pathname } = new URL(url);
+    return `${protocol}//${host}${pathname}`;
+  }

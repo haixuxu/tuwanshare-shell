@@ -1,4 +1,5 @@
 import { MAIN_DOMAIN, isChatTest } from "../config";
+import { globalState } from "../store";
 import { packSendData_general } from "../utils/encryption";
 import { QRCode } from "../utils/qrcode";
 
@@ -8,7 +9,7 @@ let _renderQrCodeHandler=null;
 
 
 export function renderQrCode() {
-
+    if(globalState.uid)return;
     const qrJson = {
         c: qrCode,
     }

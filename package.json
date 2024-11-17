@@ -23,6 +23,7 @@
     ]
   },
   "dependencies": {
+    "agora-electron-sdk": "^4.4.0",
     "electron-rpc": "./electron-rpc",
     "httpscli": "^0.0.2"
   }

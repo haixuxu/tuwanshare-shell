@@ -4,6 +4,7 @@
 const { app, protocol, BrowserWindow, session } = require("electron");
 const path = require("path");
 
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 800,
@@ -13,22 +14,24 @@ function createWindow() {
     },
   });
 
+  require("./autocookie");
   if (process.env.NODE_ENV !== "development") {
     // Load production build
     win.loadFile(`${__dirname}/renderer/dist/index.html`);
   } else {
     // Load vite dev server page
     console.log("Development mode");
-    win.loadURL("app://index.html");
+    win.loadURL("http://localhost:5173/");
   }
 }
 
 app.whenReady().then(() => {
   // 注册自定义协议
-  protocol.registerHttpProtocol("app", (request, callback) => {
-    const url = request.url.replace("app://", "http://localhost:5173/");
-    callback({ url });
-  });
+  // protocol.registerHttpProtocol("app", (request, callback) => {
+  //   const url = request.url.replace("app://", "http://localhost:5173/");
+  //   console.log('url====',url);
+  //   callback({ url });
+  // });
 
   createWindow();
 

@@ -1,6 +1,6 @@
 
 
-export const isChatTest = /test/.test(location.origin);
+export const isChatTest = /(test|localhost)/.test(location.origin);
 
 
 let papiDomain = "",
@@ -22,6 +22,30 @@ if (isChatTest) {
     userDomain = 'https://user.' + MAIN_DOMAIN;
     uDomain = 'https://u.' + MAIN_DOMAIN;
 }
+
+
+// const SocketPort = isChatTest?2124:2122;
+export const ChatConfig = {
+    appid: isChatTest ? "a73424976c8642f09324dfeafb28bc60" : "eabb3d230d1a4f20bed7b17602283a93",
+    IRTCAppid: isChatTest ? "630880f423bd92018cc674dd" : "6308738a2bf0e6018591d5f3",
+    zegoAppid: isChatTest ? 79363342 : 2075239002,
+    TRTCAppid: isChatTest ? 1600016174 : 1600055619,
+    // TRTCAppid: isChatTest ? 1600016174 : 1600023991,
+    maxUID: 800000000,
+    emptyPng: "https://res.tuwan.com/templet/play/chat/v2/images/empty.png",
+    defaultHead: 'https://uc.tuwan.com/images/noavatar_1.jpg',
+    testHat: "",
+    textColor: '#333',
+    isUpScroll: false,
+    urlapi: "chatroom",
+    domain: isChatTest ? "https://y-test.tuwan.com" : window.location.origin,
+    xuanyanDefaultText: "点击这里可以填写队长宣言哦~",
+    uidPrefix: "cli_",
+    rose: 'https://img3.tuwandata.com/uploads/play/1898151532696070.png',
+    YSD_PID : isChatTest ? "203321" : "203319",
+    YSD_APP_KEY : isChatTest ? "4059144a3ace4a23a351ca3f96e6693d" : "6166c2e4e9404ab8826db07406de1fde",
+}
+
 
 
 export let ChatUrls = {
