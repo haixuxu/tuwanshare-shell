@@ -15,6 +15,7 @@ import {
   createAgoraRtcEngine,
 } from "agora-electron-sdk";
 import { RTC_CONFIG } from "../config";
+import {askMediaAccess} from '../utils/permissions';
 
 export default class ScreenShare implements IRtcEngineEventHandler {
   // @ts-ignore
@@ -61,7 +62,7 @@ export default class ScreenShare implements IRtcEngineEventHandler {
     this.engine = createAgoraRtcEngine() as IRtcEngineEx;
     this.engine.initialize({
       appId,
-      logRTC_CONFIG: { filePath: RTC_CONFIG.logFilePath },
+      logConfig: { filePath: RTC_CONFIG.logFilePath },
       // Should use ChannelProfileLiveBroadcasting on most of cases
       channelProfile: ChannelProfileType.ChannelProfileLiveBroadcasting,
     });

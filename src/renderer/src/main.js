@@ -12,4 +12,11 @@ getRSAkey().then(() => {
 
 if (window.tuwanNapi) {
   console.log('naapi====',window.tuwanNapi);
+
+  const agoraSDK = window.tuwanNapi.AgoraSDK;
+
+  const createAgoraRtcEngine =  agoraSDK.createAgoraRtcEngine;
+
+  let engine = createAgoraRtcEngine();
+  console.log('engine====',engine);
 }
