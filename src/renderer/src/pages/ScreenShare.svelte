@@ -5,8 +5,26 @@
   import { initWebSocket } from "../common/socket";
   import { request } from "../utils/request";
   import showTips from "../utils/showtips";
-  import {ScreenShare} from '../services/sharescreen/index.js';
+  // import {ScreenShare} from '../services/sharescreen/index.js';
   import {Loading} from '../services/loading.js';
+    import { showTargetsModal } from "../modals/wrap";
+
+  const sharescreenApis = {
+    applyShare(cid) {
+        return request.get(ChatUrls.shareScreenApply(cid));
+    },
+
+    openShare(cid) {
+        // 自己结束的共享就是0
+        return request.get(ChatUrls.shareScreenOpenShare(cid));
+    },
+    closeShare(cid) {
+        // 自己结束的共享就是0
+        return request.get(ChatUrls.shareScreenCloseShare(cid, 0));
+    }
+  }
+
+  const tuwanNapi = window.tuwanNapi;
 
   let userId = "";
 
@@ -19,7 +37,7 @@
   let startShareing=false;
   // let publishing = false;
 
-  const shareScreenSvc = new ScreenShare();
+  // const shareScreenSvc = new ScreenShare();
 
   onMount(() => {
     if (!globalState.uid) return;
@@ -35,27 +53,29 @@
   });
 
   function handleWssMsg(msg){
-  
+    if(!msg)return;
     // 33 143
     if(msg.typeid===33&&msg.type===143){
       const { typeid, nickname, channelKey } = msg.data;
         window.sessionStorage.setItem('share_channelKey', channelKey);
         if(typeid == 'agree') {
-          Loading.hide();
-            window.$.DialogByZ.Confirm({
-                Title: '投屏申请通过',
-                Content: `点击【开始投屏】或大厅内【投屏】按钮即可开始投屏`,
-                BtnL: '取消',
-                BtnR: '开始投屏',
-                FunL: function() {
-                    window.$.DialogByZ.Close();
-                },
-                FunR: function(){
-                    window.$.DialogByZ.Close();
-                    startShareing = true;
-                    confirmShare();
-                }
-            });
+            Loading.hide();
+            setTimeout(()=>{
+                window.$.DialogByZ.Confirm({
+                  Title: '投屏申请通过',
+                  Content: `点击【开始投屏】或大厅内【投屏】按钮即可开始投屏`,
+                  BtnL: '取消',
+                  BtnR: '开始投屏',
+                  FunL: function() {
+                      window.$.DialogByZ.Close();
+                  },
+                  FunR: function(){
+                      window.$.DialogByZ.Close();
+                      startShareing = true;
+                      confirmShare();
+                  }
+              });
+            },100)
         } else if (typeid == 'reject') { // 主持结束了该用户的投屏
           showTips("主持拒绝了投屏");
             // shareScreen.handleCloseShareScreenSubChannel();
@@ -67,22 +87,41 @@
   }
 
   async function  confirmShare() {
-   const res = await  shareScreenSvc.openShare(cid);
+   const res = await  sharescreenApis.openShare(cid);
    if (res.error !== 0) {
       showTips(res.error_msg);
       return
     } 
-    await shareScreenSvc.initRtcEngine(roomInfo);
-    await shareScreenSvc.joinChannel();
-    await shareScreenSvc.startScreenCapture();
-    await shareScreenSvc.publishScreenCapture();
+    if(!selectSource) return;
+    // setupLocalVideo
+    await tuwanNapi.openScreenShare(selectSource, document.getElementById("screensharevideo"))
+    await tuwanNapi.joinChannel();
+  }
+
+  async function publishScreenShare(){
+    await tuwanNapi.joinChannel(channel, token, userId);
+  }
+
+  let isInitEngine=false;
+  let selectSource=null;
+
+  async function selectDisplay(){
+    if(!isInitEngine){
+      await tuwanNapi.initRtcEngine(appId);
+    }
+    const sourceList = await tuwanNapi.getScreenCaptureSources();
+    console.log('sourceList====',sourceList);
+    const modalInc = showTargetsModal({sources:sourceList});
+    const targetSource =await  modalInc.promise.catch(err=>null);
+    console.log('targetSource-====',targetSource);
+    selectSource = targetSource;
   }
 
 
   function startOrClose(){
     if(!startShareing){
-     
-      shareScreenSvc.applyShare(cid).then((res)=>{
+      // 打开共享
+      sharescreenApis.applyShare(cid).then((res)=>{
         if(res.error!==0){
           showTips(res.error_msg);
           return;
@@ -91,11 +130,10 @@
       });
       return;
     }else{
-      shareScreenSvc.closeShare(cid).then(async ()=>{
+      // 关闭共享
+      sharescreenApis.closeShare(cid).then(async ()=>{
         startShareing=false;
-         await shareScreenSvc.unpublishScreenCapture();
-         await shareScreenSvc.leaveChannel();
-         await shareScreenSvc.releaseRtcEngine();
+        await tuwanNapi.closeScreenShare()
       });
     }
 
@@ -116,7 +154,7 @@
   // }
 </script>
 
-<div>
+<div class="share-screenbox">
   <h3>登录成功</h3>
 
   <div class="form-info">当前大厅:{cid}</div>
@@ -127,7 +165,25 @@
   <div class="form-info">channelKey:{channelKey}</div>
   <div class="form-info">Token:{token}</div>
 
+  <button on:click={selectDisplay}>选择窗口</button>
   <button on:click={startOrClose}>{startShareing?'结束投屏':'开始投屏'}</button>
-  <button on:click={updateParams}>更新参数</button>
+
+
+  <div style="sharescreen-view">
+    <div id="screensharevideo"></div>
+  </div>
+  <!-- <button on:click={updateParams}>更新参数</button> -->
   <!-- <button on:click={publishOrNo}>{publishing?'取消发布视频流':'发布视频流'}</button> -->
 </div>
+
+
+<style lang="scss">
+  .share-screenbox{
+    padding: 20px;
+
+  }
+  #screensharevideo {
+      width: 600px;
+      height: 450px;
+  }
+</style>

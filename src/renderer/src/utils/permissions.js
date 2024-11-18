@@ -1,4 +1,3 @@
-
 // export type mediaType = 'microphone' | 'camera' | 'screen';
 // export interface AskMediaAccessReturn {
 //   result: boolean;
@@ -13,27 +12,24 @@
  * @param mediaTypes
  * @returns AskMediaAccessReturn[]
  */
-export const askMediaAccess = async (
-  mediaTypes
-) => {
-  let results= [];
-  if (process.platform === 'darwin') {
+export const askMediaAccess = async (mediaTypes) => {
+    let results = [];
     for (const mediaType of mediaTypes) {
-      let result = false;
-      await window.tuwanNapi.askPermission({type:mediaType})
-        .then((res) => {
-          result = res;
-        })
-        .catch((error) => {
-          result = error;
-        })
-        .finally(() => {
-          results.push({
-            mediaType,
-            result,
-          });
-        });
+        let result = false;
+        await window.tuwanNapi
+            .askPermission({ type: mediaType })
+            .then((res) => {
+                result = res;
+            })
+            .catch((error) => {
+                result = error;
+            })
+            .finally(() => {
+                results.push({
+                    mediaType,
+                    result,
+                });
+            });
     }
-  }
-  return results;
+    return results;
 };

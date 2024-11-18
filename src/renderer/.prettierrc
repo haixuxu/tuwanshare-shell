@@ -5,7 +5,6 @@
     "trailingComma": "all",
     "bracketSpacing": true,
     "jsxBracketSameLine": true,
-    "plugins": ["prettier-plugin-svelte"],
     "arrowParens": "always",
     "tabWidth": 4,
     "useTabs": false

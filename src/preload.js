@@ -1,21 +1,30 @@
-const { contextBridge, ipcRenderer,systemPreferences } = require('electron');
-const AgoraSDK = require('agora-electron-sdk');
+const { contextBridge, ipcRenderer } = require('electron');
+const { AgoraScreenShare } = require('./agorartc');
 
+const shareScreenSvc = new AgoraScreenShare();
 
-// 暴露 API
-// contextBridge.exposeInMainWorld('Agora', {
-//     sendMessage: (channel, data) => ipcRenderer.send(channel, data),
-//     receiveMessage: (channel, callback) => ipcRenderer.on(channel, (event, ...args) => callback(...args)),
-// });
 
 contextBridge.exposeInMainWorld('tuwanNapi', {
-    AgoraSDK: AgoraSDK,
-    askPermission:async function(arg){
-        if (
-            systemPreferences.getMediaAccessStatus(arg.type) === 'not-determined'
-          ) {
-            console.log('main process request handler:' + JSON.stringify(arg));
-            return await systemPreferences.askForMediaAccess(arg.type);
-        }
-    }
+    getScreenCaptureSources:async function(){
+        const list = await shareScreenSvc.getScreenCaptureSources();
+        console.log('list====',list);
+        return list;
+    },
+    initRtcEngine:async function(appId){
+        await shareScreenSvc.initRtcEngine(appId);
+    },
+    startScreenCapture: async function (targetSource,viewEl) {
+        await shareScreenSvc.setState({ targetSource: targetSource });
+        await shareScreenSvc.startScreenCapture(viewEl);
+    },
+    stopScreenCapture: async function () {
+        await shareScreenSvc.stopScreenCapture();
+    },
+    joinChannel(channel, token, uid){
+        return shareScreenSvc.joinChannel(channel, token, uid);
+    },
+    async leaveChannel(){
+        await shareScreenSvc.leaveChannel();
+        await shareScreenSvc.releaseRtcEngine();
+    },
 });

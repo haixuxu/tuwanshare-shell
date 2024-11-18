@@ -1,14 +1,27 @@
 // This file is the entry point for the Electron application.
 
 // const { app, BrowserWindow } = require('electron')
+const { ipcMain } = require("electron");
+const { systemPreferences } = require("electron");
 const { app, protocol, BrowserWindow, session } = require("electron");
 const path = require("path");
 
 
+ipcMain.handle('ask-permission', async (event, arg) => {
+  if (process.platform !== 'darwin') {
+      return;
+  }
+  console.log("=====",arg);
+  if (systemPreferences.getMediaAccessStatus(arg.type) === 'not-determined') {
+      return await systemPreferences.askForMediaAccess(arg.type);
+  }
+  return systemPreferences.getMediaAccessStatus(arg.type);
+});
+
 function createWindow() {
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1024,
+    height: 768,
     webPreferences: {
       nodeIntegration:true,
       partition: "persist:diandianuser", // 持久化分区，数据会存储到磁盘,

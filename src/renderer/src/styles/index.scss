@@ -1,0 +1,29 @@
+@import url('./loading.scss');
+@import url('./modal.scss');
+
+
+
+.form-info {
+    word-wrap: break-word;
+}
+
+
+.target_modal_content{
+    overflow-y: scroll;
+    height: 640px;
+}
+.target_list{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    .target_item{
+        width: 400px;
+        height: 300px;
+        .targetitem-body{
+            img{
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
+}

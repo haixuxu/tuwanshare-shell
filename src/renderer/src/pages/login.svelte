@@ -13,7 +13,6 @@
       <div class="qrcode-wraper">
           <div id="qrcode"></div>
           <div id="tips">请使用点点APP扫码登录</div>
-          <div id="refresh">refresh</div>
       </div>
  </div>
 </main>
@@ -27,5 +26,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  #tips{
+    text-align: center;
   }
 </style>
