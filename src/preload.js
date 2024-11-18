@@ -1,5 +1,6 @@
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer,systemPreferences } = require('electron');
 const AgoraSDK = require('agora-electron-sdk');
+
 
 // 暴露 API
 // contextBridge.exposeInMainWorld('Agora', {
@@ -8,5 +9,13 @@ const AgoraSDK = require('agora-electron-sdk');
 // });
 
 contextBridge.exposeInMainWorld('tuwanNapi', {
-    AgoraSDK: AgoraSDK
+    AgoraSDK: AgoraSDK,
+    askPermission:async function(arg){
+        if (
+            systemPreferences.getMediaAccessStatus(arg.type) === 'not-determined'
+          ) {
+            console.log('main process request handler:' + JSON.stringify(arg));
+            return await systemPreferences.askForMediaAccess(arg.type);
+        }
+    }
 });

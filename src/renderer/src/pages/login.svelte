@@ -1,5 +1,5 @@
 <script>
-  import { renderQrCode } from "../lib/qrcodeLogin";
+  import { renderQrCode } from "../common/qrcodeLogin";
 
   import { onMount } from "svelte";
 

@@ -1,6 +1,7 @@
 
 
-export const isChatTest = /(test|localhost)/.test(location.origin);
+// export const isChatTest = /(test|localhost)/.test(location.origin);
+export const isChatTest = true;
 
 
 let papiDomain = "",
@@ -189,5 +190,23 @@ export let ChatUrls = {
     },
     inviteShareInfo() {
         return yapiDomain + "/Activity/inviteShareInfo?format=jsonp"
-    }
+    },
+        /**
+     * 申请屏幕共享
+     * @param {*} cid 
+     */
+        shareScreenApply(cid){
+            return yapiDomain + `/sharescreen/apply?format=jsonp&id=${cid}`;
+        },
+    shareScreenOpenShare(cid){
+        return yapiDomain + `/sharescreen/openShare?format=jsonp&id=${cid}`;
+    },
+       /**
+     * 断开共享：主持断开、自己取消
+     * @param {*} cid 大厅ID/小厅ID
+     * @param {*} uid 被操作的用户id（uid>0：主持拒绝；uid=0：自己取消；）
+     */
+       shareScreenCloseShare(cid, uid){
+        return yapiDomain + `/sharescreen/closeShare?format=jsonp&id=${cid}&uid=${uid}`;
+    },
 }

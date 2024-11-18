@@ -9,20 +9,19 @@
   let isLogin = false;
   let loading = true;
 
-  let userinfo = {};
-
   onMount(async () => {
     try {
       const res = await request.get(ChatUrls.regUserinfo());
       console.log("res====", res);
       if (res?.data?.uid) {
         globalState.uid = res.data.uid;
-        isLogin = true;
-        loading = false;
+    
         const webinfo = await request.get(
           ChatUrls.getWebInfo(globalState.channel)
         );
         Object.assign(roomInfo, webinfo.data);
+        isLogin = true;
+        loading = false;
       }else{
         loading = false;
         isLogin=false;
@@ -41,9 +40,11 @@
 {#if loading === false}
   <div class="app-container">
     {#if isLogin}
-      <ScreenShare></ScreenShare>
 
-      <button on:click={logout}>退出</button>
+      <div class="opt-buttons">
+        <button on:click={logout}>退出</button>
+      </div>
+      <ScreenShare></ScreenShare>
     {:else}
       <Login></Login>
     {/if}

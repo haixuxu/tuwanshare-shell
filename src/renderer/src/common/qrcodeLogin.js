@@ -49,7 +49,6 @@ export function renderQrCode() {
                 } else {
 
                     if (response.code == 0) {
-                        debugger;
                         window.location.reload();
                     }
 

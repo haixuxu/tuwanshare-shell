@@ -1,10 +1,9 @@
-import { ipcRenderer } from 'electron';
 
-export type mediaType = 'microphone' | 'camera' | 'screen';
-export interface AskMediaAccessReturn {
-  result: boolean;
-  mediaType: mediaType;
-}
+// export type mediaType = 'microphone' | 'camera' | 'screen';
+// export interface AskMediaAccessReturn {
+//   result: boolean;
+//   mediaType: mediaType;
+// }
 
 /**
  * request media permission MACOS ONLY
@@ -15,17 +14,14 @@ export interface AskMediaAccessReturn {
  * @returns AskMediaAccessReturn[]
  */
 export const askMediaAccess = async (
-  mediaTypes: mediaType[]
-): Promise<AskMediaAccessReturn[]> => {
-  let results: AskMediaAccessReturn[] = [];
+  mediaTypes
+) => {
+  let results= [];
   if (process.platform === 'darwin') {
     for (const mediaType of mediaTypes) {
-      let result: boolean = false;
-      await ipcRenderer
-        .invoke('IPC_REQUEST_PERMISSION_HANDLER', {
-          type: mediaType,
-        })
-        .then((res: boolean) => {
+      let result = false;
+      await window.tuwanNapi.askPermission({type:mediaType})
+        .then((res) => {
           result = res;
         })
         .catch((error) => {

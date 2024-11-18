@@ -32,5 +32,5 @@
    * Use global.d.ts instead of compilerOptions.types
    * to avoid limiting type declarations.
    */
-  "include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.svelte", "src/renderer/src/lib/agoraRtc.ts", "src/renderer/src/lib/agoraRtc.ts"]
+  "include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.svelte", "src/renderer/src/common/agoraRtc.ts", "src/renderer/src/common/agoraRtc.ts", "src/renderer/src/services/sharescreen/index.js", "src/renderer/src/services/sharescreen/index.js"]
 }
