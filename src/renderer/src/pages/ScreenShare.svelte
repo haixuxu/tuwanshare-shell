@@ -121,6 +121,7 @@
         if (!isInitEngine) {
             await tuwanNapi.initRtcEngine(appId);
         }
+        await tuwanNapi.stopScreenCapture();
         const sourceList = await tuwanNapi.getScreenCaptureSources();
         console.log('sourceList====', sourceList);
         const modalInc = showTargetsModal({ sources: sourceList });
