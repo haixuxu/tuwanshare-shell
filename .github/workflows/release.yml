@@ -1,0 +1,80 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*' # 监听标签发布
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    permissions: write-all
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18' # 或其他支持的版本
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build the app
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-${{ matrix.os }}
+          path: |
+            # 上传构建的文件，可以根据需要指定路径
+            dist/*.exe
+            dist/*.dmg
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-windows-latest # 下载 Windows 构建的文件
+          path: ./artifacts/windows
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-macos-latest # 下载 macOS 构建的文件
+          path: ./artifacts/macos
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Assets
+        uses: AButler/upload-release-assets@v3.0
+        with:
+          files: |
+            ./artifacts/windows/*
+            ./artifacts/macos/*
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          release-tag: ${{ github.ref }}
+          release-id: ${{ steps.create_release.outputs.id }}
+
