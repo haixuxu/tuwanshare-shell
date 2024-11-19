@@ -1,6 +1,6 @@
 {
   "name": "diandian-share",
-  "version": "0.0.1-rc.6",
+  "version": "0.0.2",
   "main": "src/index.js",
   "author": "xuxihai",
   "scripts": {
