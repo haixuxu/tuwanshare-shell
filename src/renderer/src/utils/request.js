@@ -17,6 +17,9 @@ import { sessionStore } from "./sessionstore";
             const params = {
                 url: url,
                 type: "get",
+                data:{
+                    platform:150
+                },
                 dataType: dataType,
                 success: (response) => {
                     resolve(response)
