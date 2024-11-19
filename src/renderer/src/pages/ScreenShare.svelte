@@ -148,7 +148,8 @@
                     showTips(res.error_msg);
                     return;
                 }
-                Loading.show({ text: '正在申请授权' });
+                showTips("正在申请授权");
+                // Loading.show({ text: '正在申请授权' });
             });
             return;
         } else {
