@@ -110,12 +110,9 @@
         if (!selectSource) return;
         // setupLocalVideo
 
-        await tuwanNapi.joinChannel();
-    }
-
-    async function publishScreenShare() {
         await tuwanNapi.joinChannel(channel, token, userId);
     }
+
 
     let isInitEngine = false;
     let selectSource = null;
@@ -130,6 +127,10 @@
         const targetSource = await modalInc.promise.catch((err) => null);
         console.log('targetSource-====', targetSource);
         selectSource = targetSource;
+        if (!targetSource) {
+          showTips("操作已取消");
+          return;
+        }
         await tuwanNapi.startScreenCapture(selectSource, document.getElementById('screensharevideo'));
     }
 
