@@ -29,9 +29,11 @@ jobs:
 
       - name: Build the app
         run: npm run build # 确保你的 package.json 有相应的构建命令
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Package the app
-        run: npm run package # 替换为你的打包命令
+      # - name: Package the app
+      #   run: npm run package # 替换为你的打包命令
 
       - name: Create release
         uses: softprops/action-gh-release@v1
