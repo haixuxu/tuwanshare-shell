@@ -1,8 +1,6 @@
 const { ipcRenderer } = require('electron');
 const { ChannelProfileType, ClientRoleType, LocalVideoStreamState,VideoViewSetupMode,RenderModeType, ScreenCaptureSourceType, VideoSourceType, createAgoraRtcEngine } = require('agora-electron-sdk');
 
-
-
 const args = {
     targetSource: undefined,
     width: 1920,
@@ -30,7 +28,7 @@ exports.AgoraScreenShare = class AgoraScreenShare {
         console.log('==========engine===', this.engine);
         this.engine.initialize({
             appId: appId,
-            logConfig: { filePath: 'agora.log' },
+            // logConfig: { filePath: 'agora.log' },
             // Should use ChannelProfileLiveBroadcasting on most of cases
             channelProfile: ChannelProfileType.ChannelProfileLiveBroadcasting,
         });
@@ -39,17 +37,13 @@ exports.AgoraScreenShare = class AgoraScreenShare {
         // Need granted the microphone and camera permission
         // await askMediaAccess(['microphone', 'camera', 'screen']);
         await this.askPermission({ type: 'microphone' });
-        await this.askPermission({ type: 'camera' });
+        // await this.askPermission({ type: 'camera' });
         await this.askPermission({ type: 'screen' });
 
         // Need to enable video on this case
         // If you only call `enableAudio`, only relay the audio stream to the target channel
         this.engine.enableVideo();
 
-        // Start preview before joinChannel
-        this.engine.startPreview();
-        // this.setState({ startPreview: true });
-        // this.getScreenCaptureSources();
     }
 
     setSource(source){

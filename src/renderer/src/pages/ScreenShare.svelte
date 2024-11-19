@@ -67,6 +67,7 @@
 
     function handleWssMsg(msg) {
         if (!msg) return;
+        if(msg.platform!==150)return;
         // 33 143
         if (msg.typeid === 33 && msg.type === 143) {
             const { typeid, nickname, channelKey } = msg.data;
