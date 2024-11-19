@@ -4,7 +4,6 @@ on:
   push:
     tags:
       - 'v*' # 监听标签发布
-    
 
 jobs:
   build:
@@ -12,7 +11,12 @@ jobs:
     permissions: write-all
     strategy:
       matrix:
-        os: [windows-latest, macos-latest]
+        os:
+          - windows-latest
+          - macos-latest
+        arch:
+          - x64
+          - arm64
 
     steps:
       - name: Checkout code
@@ -27,16 +31,16 @@ jobs:
         run: yarn install
 
       - name: Build the app
-        run: npm run build
+        run: npm run build -- --arch ${{ matrix.arch }}
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
         with:
-          name: build-${{ matrix.os }}
+          name: build-${{ matrix.os }}-${{ matrix.arch }}
           path: |
-            # 上传构建的文件，可以根据需要指定路径
+            # 根据架构上传构建的文件
             dist/*.exe
             dist/*.dmg
 
@@ -48,17 +52,30 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Download build artifacts
+      - name: Download build artifacts for Windows x64
         uses: actions/download-artifact@v3
         with:
-          name: build-windows-latest # 下载 Windows 构建的文件
-          path: ./artifacts/windows
+          name: build-windows-latest-x64
+          path: ./artifacts/windows/x64
 
-      - name: Download build artifacts
+      - name: Download build artifacts for Windows ARM
         uses: actions/download-artifact@v3
         with:
-          name: build-macos-latest # 下载 macOS 构建的文件
-          path: ./artifacts/macos
+          name: build-windows-latest-arm64
+          path: ./artifacts/windows/arm64
+
+      - name: Download build artifacts for macOS x64
+        uses: actions/download-artifact@v3
+        with:
+          name: build-macos-latest-x64
+          path: ./artifacts/macos/x64
+
+      - name: Download build artifacts for macOS ARM
+        uses: actions/download-artifact@v3
+        with:
+          name: build-macos-latest-arm64
+          path: ./artifacts/macos/arm64
+
       - name: Print new build number
         run: |
           ls -al ./artifacts/macos
@@ -74,7 +91,6 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
-
 
       - name: Upload Release Assets
         uses: AButler/upload-release-assets@v3.0
