@@ -1,5 +1,5 @@
 <script>
-    import { thumbImageBufferToBase64 } from '../utils/thumbImage';
+    import Image from '../components/Image.svelte';
 
     export let sources = [];
 
@@ -24,7 +24,7 @@
                     <div class="target_item" on:click={() => clickItem(item)} role="presentation">
                         <div class="targetitem-title">{item.sourceName}/{item.sourceId}</div>
                         <div class="targetitem-body">
-                            <img src={thumbImageBufferToBase64(item.thumbImage)} alt="" />
+                            <Image thumbImage={item.thumbImage} />
                         </div>
                     </div>
                 {/each}

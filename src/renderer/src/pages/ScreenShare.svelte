@@ -67,7 +67,8 @@
 
     function handleWssMsg(msg) {
         if (!msg) return;
-        if(msg.platform!==150)return;
+        // if(msg.platform!==150)return;
+
         // 33 143
         if (msg.typeid === 33 && msg.type === 143) {
             const { typeid, nickname, channelKey } = msg.data;
@@ -123,8 +124,11 @@
             await tuwanNapi.initRtcEngine(appId);
         }
         await tuwanNapi.stopScreenCapture();
+        console.time("getScreenCaptureSources");
         const sourceList = await tuwanNapi.getScreenCaptureSources();
+        console.timeEnd("getScreenCaptureSources");
         console.log('sourceList====', sourceList);
+
         const modalInc = showTargetsModal({ sources: sourceList });
         const targetSource = await modalInc.promise.catch((err) => null);
         console.log('targetSource-====', targetSource);
