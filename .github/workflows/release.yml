@@ -31,7 +31,7 @@ jobs:
         run: yarn install
 
       - name: Build the app
-        run: npm run build -- --arch ${{ matrix.arch }}
+        run: npm run build
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
