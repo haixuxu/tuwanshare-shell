@@ -6,6 +6,12 @@ export const thumbImageBufferToBase64 = (target) => {
       return '';
     }
 
+    const url  = URL.createObjectURL(
+      new Blob([target.buffer], { type: 'image/png' } /* (1) */)
+    );
+    return url;
+    //
+    return;
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     if (!ctx) return '';

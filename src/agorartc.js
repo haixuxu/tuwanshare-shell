@@ -81,8 +81,8 @@ exports.AgoraScreenShare = class AgoraScreenShare {
     /**
      * Step 3-1: getScreenCaptureSources
      */
-    getScreenCaptureSources = () => {
-        return this.engine?.getScreenCaptureSources({ width: 1920, height: 1080 }, { width: 64, height: 64 }, true);
+    getScreenCaptureSources (thumbSize={width: 480, height: 360}, iconSize={width: 64, height: 64}, includeScreen=true) {
+        return this.engine?.getScreenCaptureSources(thumbSize,iconSize,includeScreen);
     };
 
     /**
