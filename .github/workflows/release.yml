@@ -2,11 +2,8 @@ name: Build and Release
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+    tags:
+      - 'v*' # 监听标签发布
     
 
 jobs:
