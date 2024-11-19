@@ -1,6 +1,6 @@
 {
-  "name": "vite-project",
-  "version": "0.0.0",
+  "name": "diandian-share",
+  "version": "0.0.1",
   "main": "src/index.js",
   "scripts": {
     "start": "NODE_ENV=development concurrently \"npm run web:watch\" \"npm run electron:start\"",
