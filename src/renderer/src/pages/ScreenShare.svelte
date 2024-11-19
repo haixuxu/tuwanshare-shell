@@ -110,7 +110,7 @@
         if (!selectSource) return;
         // setupLocalVideo
 
-        await tuwanNapi.joinChannel(channel, token, userId);
+        await tuwanNapi.joinChannel(channel, channelKey, userId);
     }
 
 
@@ -149,7 +149,7 @@
             // 关闭共享
             sharescreenApis.closeShare(cid).then(async () => {
                 startShareing = false;
-                await tuwanNapi.closeScreenShare();
+                await tuwanNapi.leaveChannel();
             });
         }
     }
