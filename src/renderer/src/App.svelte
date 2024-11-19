@@ -16,10 +16,6 @@
       if (res?.data?.uid) {
         globalState.uid = res.data.uid;
     
-        const webinfo = await request.get(
-          ChatUrls.getWebInfo(globalState.channel)
-        );
-        Object.assign(roomInfo, webinfo.data);
         isLogin = true;
         loading = false;
       }else{

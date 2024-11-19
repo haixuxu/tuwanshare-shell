@@ -191,6 +191,9 @@ export let ChatUrls = {
     inviteShareInfo() {
         return yapiDomain + "/Activity/inviteShareInfo?format=jsonp"
     },
+    shareScreenGetInfo(){
+        return yapiDomain+"/sharescreen/getInfo"
+    },
         /**
      * 申请屏幕共享
      * @param {*} cid 
