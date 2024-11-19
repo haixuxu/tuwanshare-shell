@@ -58,6 +58,8 @@ jobs:
         with:
           name: build-macos-latest # 下载 macOS 构建的文件
           path: ./artifacts/macos
+      - name: Print new build number
+        run: ls -al
 
       - name: Create Release
         id: create_release
@@ -69,6 +71,7 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
+
 
       - name: Upload Release Assets
         uses: AButler/upload-release-assets@v3.0
