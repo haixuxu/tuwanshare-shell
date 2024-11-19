@@ -94,7 +94,7 @@
     } 
     if(!selectSource) return;
     // setupLocalVideo
-    await tuwanNapi.openScreenShare(selectSource, document.getElementById("screensharevideo"))
+    
     await tuwanNapi.joinChannel();
   }
 
@@ -115,6 +115,7 @@
     const targetSource =await  modalInc.promise.catch(err=>null);
     console.log('targetSource-====',targetSource);
     selectSource = targetSource;
+    await tuwanNapi.startScreenCapture(selectSource, document.getElementById("screensharevideo"))
   }
 
 

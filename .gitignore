@@ -6,3 +6,5 @@ dist/
 
 # Dependencies
 node_modules/
+
+agora.log

@@ -96,6 +96,7 @@ exports.AgoraScreenShare = class AgoraScreenShare {
         }
         console.log('======startScreenCapture=====', targetSource);
         if (targetSource.type === ScreenCaptureSourceType.ScreencapturesourcetypeScreen) {
+            console.log('start DisplayId1',targetSource.sourceId);
             this.engine?.startScreenCaptureByDisplayId(
                 targetSource.sourceId,
                 {},
@@ -112,6 +113,7 @@ exports.AgoraScreenShare = class AgoraScreenShare {
                 },
             );
         } else {
+            console.log('start DisplayId2',targetSource.sourceId);
             this.engine?.startScreenCaptureByWindowId(
                 targetSource.sourceId,
                 {},

@@ -5,19 +5,19 @@ const shareScreenSvc = new AgoraScreenShare();
 
 
 contextBridge.exposeInMainWorld('tuwanNapi', {
-    getScreenCaptureSources:async function(){
+    async getScreenCaptureSources(){
         const list = await shareScreenSvc.getScreenCaptureSources();
         console.log('list====',list);
         return list;
     },
-    initRtcEngine:async function(appId){
+    async initRtcEngine(appId){
         await shareScreenSvc.initRtcEngine(appId);
     },
-    startScreenCapture: async function (targetSource,viewEl) {
-        await shareScreenSvc.setState({ targetSource: targetSource });
+    async startScreenCapture (targetSource,viewEl) {
+        await shareScreenSvc.setSource(targetSource);
         await shareScreenSvc.startScreenCapture(viewEl);
     },
-    stopScreenCapture: async function () {
+    async stopScreenCapture () {
         await shareScreenSvc.stopScreenCapture();
     },
     joinChannel(channel, token, uid){

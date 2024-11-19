@@ -37,6 +37,8 @@ function createWindow() {
     // Load vite dev server page
     console.log("Development mode");
     win.loadURL("http://localhost:5173/");
+        // 打开 DevTools
+    win.webContents.openDevTools();
   }
 }
 
