@@ -46,7 +46,7 @@ jobs:
 
       - uses: AButler/upload-release-assets@v3.0
         with:
-          files: "dist/*"
+          files: "dist/*.exe;dist/*.dmg"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           release-tag: ${{ github.ref }}
           release-id: ${{ steps.create_release.outputs.id }}
