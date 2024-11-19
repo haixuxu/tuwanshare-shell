@@ -24,6 +24,7 @@
                     <div class="target_item" on:click={() => clickItem(item)} role="presentation">
                         <div class="targetitem-title">{item.sourceName}/{item.sourceId}</div>
                         <div class="targetitem-body">
+                            <img src={thumbImageBufferToBase64(item.thumbImage)} alt="" />
                         </div>
                     </div>
                 {/each}

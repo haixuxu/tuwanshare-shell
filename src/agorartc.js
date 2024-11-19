@@ -129,12 +129,13 @@ exports.AgoraScreenShare = class AgoraScreenShare {
             );
         }
         console.log('=======setupLocalVideo=====',viewEl);
-        this.engine?.setupLocalVideo({
-            sourceType: VideoSourceType.VideoSourceScreen,
+        const ret = this.engine?.setupLocalVideo({
+            sourceType: VideoSourceType.VideoSourceScreenPrimary,
             renderMode: RenderModeType.RenderModeFit,
-            setupMode: VideoViewSetupMode.VideoViewSetupRemove,
+            setupMode: VideoViewSetupMode.VideoViewSetupReplace,
             view: viewEl,
-        })
+        });
+        console.log('setupLocalVideo===ret===',ret);
     };
 
     /**
