@@ -2,11 +2,9 @@ name: Build Electron App
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+    # Sequence of patterns matched against refs/tags
+    tags:
+    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
 jobs:
   build:
@@ -35,16 +33,21 @@ jobs:
       # - name: Package the app
       #   run: npm run package # 替换为你的打包命令
 
-      - name: Create release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ github.ref }}
-          files: |
-            dist/*.exe
-            dist/*.dmg
-            dist/*.AppImage
-            dist/*.deb
-            dist/*.rpm
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - uses: AButler/upload-release-assets@v3.0
+        with:
+          files: "dist/*"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          release-tag: ${{ github.ref }}
+          release-id: ${{ steps.create_release.outputs.id }}
 
