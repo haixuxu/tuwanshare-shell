@@ -1,6 +1,6 @@
 {
   "name": "diandian-share",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": "xuxihai",
   "main": "./src/index.js",
   "scripts": {
@@ -16,8 +16,10 @@
     "appId": "com.tuwan.diandianshare",
     "files": [
       "src/**/*",
-      "node_modules/agora-electron-sdk/**/*",
       "package.json"
+    ],
+    "asarUnpack": [
+      "node_modules/agora-electron-sdk"
     ]
   },
   
