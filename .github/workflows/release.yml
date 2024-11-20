@@ -30,7 +30,14 @@ jobs:
         run: yarn install
 
       - name: Build the app
-        run: npm run build -- --arch ${{ matrix.arch }}
+        run: |
+          if [ "${{ matrix.arch }}" == "arm64" ]; then
+            echo "Building for ARM64"
+            npm run build -- --arm64
+          else
+            echo "Building for x64"
+            npm run build -- --x64
+          fi
         
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
