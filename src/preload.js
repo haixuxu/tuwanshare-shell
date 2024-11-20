@@ -6,7 +6,6 @@ const shareScreenSvc = new AgoraScreenShare();
 contextBridge.exposeInMainWorld('tuwanNapi', {
     async getScreenCaptureSources(thumbSize, iconSize, includeScreen) {
         const list = await shareScreenSvc.getScreenCaptureSources(thumbSize, iconSize, includeScreen);
-        console.log('list====', list);
         return list;
     },
     async initRtcEngine(appId) {
