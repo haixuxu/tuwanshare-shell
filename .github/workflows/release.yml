@@ -12,7 +12,6 @@ jobs:
     strategy:
       matrix:
         os:
-          - windows-latest
           - macos-latest
         arch:
           - x64
@@ -31,7 +30,8 @@ jobs:
         run: yarn install
 
       - name: Build the app
-        run: npm run build
+        run: npm run build -- --arch ${{ matrix.arch }}
+        
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -56,30 +56,29 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build-windows-latest-x64
-          path: ./artifacts/windows/x64
+          path: ./artifacts
 
       - name: Download build artifacts for Windows ARM
         uses: actions/download-artifact@v3
         with:
           name: build-windows-latest-arm64
-          path: ./artifacts/windows/arm64
+          path: ./artifacts
 
       - name: Download build artifacts for macOS x64
         uses: actions/download-artifact@v3
         with:
           name: build-macos-latest-x64
-          path: ./artifacts/macos/x64
+          path: ./artifacts
 
       - name: Download build artifacts for macOS ARM
         uses: actions/download-artifact@v3
         with:
           name: build-macos-latest-arm64
-          path: ./artifacts/macos/arm64
+          path: ./artifacts
 
       - name: Print new build number
         run: |
-          ls -al ./artifacts/macos
-          ls -al ./artifacts/windows
+          ls -al ./artifacts
 
       - name: Create Release
         id: create_release
