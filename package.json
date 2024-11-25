@@ -1,10 +1,10 @@
 {
   "name": "diandian-share",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "author": "xuxihai",
   "main": "./src/index.js",
   "scripts": {
-    "start": "electron src",
+    "start": "NODE_ENV=development electron src",
     "build": "electron-builder"
   },
   "devDependencies": {

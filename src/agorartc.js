@@ -14,41 +14,46 @@ const args = {
     highLightColor: 0xff8cbf26,
     enableHighLight: false,
 }
+let engine = null;
 
-exports.AgoraScreenShare = class AgoraScreenShare {
+function askPermission(arg) {
+    return ipcRenderer.invoke('ask-permission', arg);
+}
+
+exports.agoraApi ={
     askPermission(arg) {
         return ipcRenderer.invoke('ask-permission', arg);
-    }
+    },
     /**
      * Step 1: initRtcEngine
      */
     async initRtcEngine(appId) {
         console.log('initRtcEngine====', appId);
-        this.engine = createAgoraRtcEngine();
-        console.log('==========engine===', this.engine);
-        this.engine.initialize({
+        engine = createAgoraRtcEngine();
+        console.log('==========engine===', engine);
+        engine.initialize({
             appId: appId,
             // logConfig: { filePath: 'agora.log' },
             // Should use ChannelProfileLiveBroadcasting on most of cases
             channelProfile: ChannelProfileType.ChannelProfileLiveBroadcasting,
         });
-        this.engine.registerEventHandler(this);
+        engine.registerEventHandler(this);
 
         // Need granted the microphone and camera permission
         // await askMediaAccess(['microphone', 'camera', 'screen']);
-        await this.askPermission({ type: 'microphone' });
+        await askPermission({ type: 'microphone' });
         // await this.askPermission({ type: 'camera' });
-        await this.askPermission({ type: 'screen' });
+        await askPermission({ type: 'screen' });
 
         // Need to enable video on this case
         // If you only call `enableAudio`, only relay the audio stream to the target channel
-        this.engine.enableVideo();
+        engine.enableVideo();
 
-    }
+    },
 
     setSource(source){
         args.targetSource = source;
-    }
+    },
 
     /**
      * Step 2: joinChannel
@@ -65,24 +70,24 @@ exports.AgoraScreenShare = class AgoraScreenShare {
         // 2. If app certificate is turned on at dashboard, token is needed
         // when joining channel. The channel name and uid used to calculate
         // the token has to match the ones used for channel join
-        this.engine?.joinChannel(token, channelId, uid, {
+        engine?.joinChannel(token, channelId, uid, {
             // Make myself as the broadcaster to send stream to remote
             clientRoleType: ClientRoleType.ClientRoleBroadcaster,
             publishScreenTrack: true
         });
-    }
+    },
 
     /**
      * Step 3-1: getScreenCaptureSources
      */
     getScreenCaptureSources (thumbSize={width: 480, height: 360}, iconSize={width: 64, height: 64}, includeScreen=true) {
-        return this.engine?.getScreenCaptureSources(thumbSize,iconSize,includeScreen);
-    };
+        return engine?.getScreenCaptureSources(thumbSize,iconSize,includeScreen);
+    },
 
     /**
      * Step 3-2: startScreenCapture
      */
-    startScreenCapture = (viewEl) => {
+    startScreenCapture(viewEl)  {
         const { targetSource, width, height, frameRate, bitrate, captureMouseCursor, windowFocus, excludeWindowList, highLightWidth, highLightColor, enableHighLight } = args;
 
         if (!targetSource) {
@@ -92,7 +97,7 @@ exports.AgoraScreenShare = class AgoraScreenShare {
         console.log('======startScreenCapture=====', targetSource);
         if (targetSource.type === ScreenCaptureSourceType.ScreencapturesourcetypeScreen) {
             console.log('start DisplayId1',targetSource.sourceId);
-            this.engine?.startScreenCaptureByDisplayId(
+            engine?.startScreenCaptureByDisplayId(
                 targetSource.sourceId,
                 {},
                 {
@@ -109,7 +114,7 @@ exports.AgoraScreenShare = class AgoraScreenShare {
             );
         } else {
             console.log('start DisplayId2',targetSource.sourceId);
-            this.engine?.startScreenCaptureByWindowId(
+            engine?.startScreenCaptureByWindowId(
                 targetSource.sourceId,
                 {},
                 {
@@ -124,21 +129,21 @@ exports.AgoraScreenShare = class AgoraScreenShare {
             );
         }
         console.log('=======setupLocalVideo=====',viewEl);
-        const ret = this.engine?.setupLocalVideo({
+        const ret = engine?.setupLocalVideo({
             sourceType: VideoSourceType.VideoSourceScreenPrimary,
             renderMode: RenderModeType.RenderModeFit,
             setupMode: VideoViewSetupMode.VideoViewSetupReplace,
             view: viewEl,
         });
         console.log('setupLocalVideo===ret===',ret);
-    };
+    },
 
     /**
      * Step 3-2 (Optional): updateScreenCaptureParameters
      */
-    updateScreenCaptureParameters = () => {
+    updateScreenCaptureParameters () {
         const { width, height, frameRate, bitrate, captureMouseCursor, windowFocus, excludeWindowList, highLightWidth, highLightColor, enableHighLight } = args;
-        this.engine?.updateScreenCaptureParameters({
+        engine?.updateScreenCaptureParameters({
             dimensions: { width, height },
             frameRate,
             bitrate,
@@ -150,49 +155,53 @@ exports.AgoraScreenShare = class AgoraScreenShare {
             highLightColor,
             enableHighLight,
         });
-    };
+    },
 
     /**
      * Step 3-5: stopScreenCapture
      */
-    stopScreenCapture = () => {
-        this.engine?.stopScreenCapture();
-    };
+    stopScreenCapture() {
+        engine?.stopScreenCapture();
+    },
     /**
      * Step 4: leaveChannel
      */
     leaveChannel() {
-        this.engine?.leaveChannel();
-    }
+        engine?.leaveChannel();
+    },
 
     /**
      * Step 5: releaseRtcEngine
      */
     releaseRtcEngine() {
-        this.engine?.unregisterEventHandler(this);
-        this.engine?.release();
-    }
+        engine?.unregisterEventHandler(this);
+        engine?.release();
+    },
+
+    setScreenCaptureScenario(scenarioType){
+        engine?.setScreenCaptureScenario(scenarioType);
+    },
 
     onJoinChannelSuccess(connection, elapsed) {
         console.log('onJoinChannelSuccess', 'connection', connection); 
-    }
+    },
 
     onLeaveChannel(connection, stats) {
         console.log('onLeaveChannel', 'connection', connection, 'stats', stats);
      
-    }
+    },
 
     onUserJoined(connection, remoteUid, elapsed) {
         console.log('onUserJoined====',remoteUid);
         // const { uid2 } = state;
         // if (connection.localUid === uid2 || remoteUid === uid2) {
         //     // ⚠️ mute the streams from screen sharing
-        //     this.engine?.muteRemoteAudioStream(uid2, true);
-        //     this.engine?.muteRemoteVideoStream(uid2, true);
+        //     engine?.muteRemoteAudioStream(uid2, true);
+        //     engine?.muteRemoteVideoStream(uid2, true);
         //     return;
         // }
-    }
+    },
     onLocalVideoStateChanged(source, state, error) {
         console.log('onLocalVideoStateChanged', 'source', source, 'state', state, 'error', error);
     }
-};
+}
