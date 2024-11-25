@@ -21,9 +21,6 @@ function askPermission(arg) {
 }
 
 exports.agoraApi ={
-    askPermission(arg) {
-        return ipcRenderer.invoke('ask-permission', arg);
-    },
     /**
      * Step 1: initRtcEngine
      */
