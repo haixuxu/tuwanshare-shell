@@ -1,204 +1,36 @@
 const { ipcRenderer } = require('electron');
-const { ChannelProfileType, ClientRoleType, LocalVideoStreamState,VideoViewSetupMode,RenderModeType, ScreenCaptureSourceType, VideoSourceType, createAgoraRtcEngine } = require('agora-electron-sdk');
+const { ChannelProfileType, ClientRoleType, LocalVideoStreamState, VideoViewSetupMode, RenderModeType, ScreenCaptureSourceType, VideoSourceType, createAgoraRtcEngine } = require('agora-electron-sdk');
+const { eventHandler } = require("./events");
 
-const args = {
-    targetSource: undefined,
-    width: 1920,
-    height: 1080,
-    frameRate: 15,
-    bitrate: 0,
-    captureMouseCursor: true,
-    windowFocus: false,
-    excludeWindowList: [],
-    highLightWidth: 0,
-    highLightColor: 0xff8cbf26,
-    enableHighLight: false,
-}
 let engine = null;
 
-function askPermission(arg) {
-    return ipcRenderer.invoke('ask-permission', arg);
-}
+// enableLoopbackRecording
 
-exports.agoraApi ={
-    /**
-     * Step 1: initRtcEngine
-     */
-    async initRtcEngine(appId) {
-        console.log('initRtcEngine====', appId);
+exports.agoraApi = {
+    types: { ChannelProfileType, ClientRoleType, LocalVideoStreamState, VideoViewSetupMode, RenderModeType, ScreenCaptureSourceType, VideoSourceType },
+    askPermission(arg) {
+        return ipcRenderer.invoke('ask-permission', arg);
+    },
+    async initRtcEngine(opts) {
         engine = createAgoraRtcEngine();
-        console.log('==========engine===', engine);
-        engine.initialize({
-            appId: appId,
-            // logConfig: { filePath: 'agora.log' },
-            // Should use ChannelProfileLiveBroadcasting on most of cases
-            channelProfile: ChannelProfileType.ChannelProfileLiveBroadcasting,
-        });
-        engine.registerEventHandler(this);
-
-        // Need granted the microphone and camera permission
-        // await askMediaAccess(['microphone', 'camera', 'screen']);
-        await askPermission({ type: 'microphone' });
-        // await this.askPermission({ type: 'camera' });
-        await askPermission({ type: 'screen' });
-
-        // Need to enable video on this case
-        // If you only call `enableAudio`, only relay the audio stream to the target channel
-        engine.enableVideo();
-
+        engine.initialize(opts);
+        engine.registerEventHandler(eventHandler);
     },
-
-    setSource(source){
-        args.targetSource = source;
-    },
-
-    /**
-     * Step 2: joinChannel
-     */
-    joinChannel(channelId,token,uid) {
-        if (!channelId) {
-            console.log('channelId is invalid');
-            return;
-        }
-        console.log('joinChannel====', channelId, token, uid);
-        // start joining channel
-        // 1. Users can only see each other after they join the
-        // same channel successfully using the same app id.
-        // 2. If app certificate is turned on at dashboard, token is needed
-        // when joining channel. The channel name and uid used to calculate
-        // the token has to match the ones used for channel join
-        engine?.joinChannel(token, channelId, uid, {
-            // Make myself as the broadcaster to send stream to remote
-            clientRoleType: ClientRoleType.ClientRoleBroadcaster,
-            publishScreenTrack: true
-        });
-    },
-
-    /**
-     * Step 3-1: getScreenCaptureSources
-     */
-    getScreenCaptureSources (thumbSize={width: 480, height: 360}, iconSize={width: 64, height: 64}, includeScreen=true) {
-        return engine?.getScreenCaptureSources(thumbSize,iconSize,includeScreen);
-    },
-
-    /**
-     * Step 3-2: startScreenCapture
-     */
-    startScreenCapture(viewEl)  {
-        const { targetSource, width, height, frameRate, bitrate, captureMouseCursor, windowFocus, excludeWindowList, highLightWidth, highLightColor, enableHighLight } = args;
-
-        if (!targetSource) {
-            console.log('targetSource is invalid');
-            return;
-        }
-        console.log('======startScreenCapture=====', targetSource);
-        if (targetSource.type === ScreenCaptureSourceType.ScreencapturesourcetypeScreen) {
-            console.log('start DisplayId1',targetSource.sourceId);
-            engine?.startScreenCaptureByDisplayId(
-                targetSource.sourceId,
-                {},
-                {
-                    dimensions: { width, height },
-                    frameRate,
-                    bitrate,
-                    captureMouseCursor,
-                    excludeWindowList,
-                    excludeWindowCount: excludeWindowList.length,
-                    highLightWidth,
-                    highLightColor,
-                    enableHighLight,
-                },
-            );
-        } else {
-            console.log('start DisplayId2',targetSource.sourceId);
-            engine?.startScreenCaptureByWindowId(
-                targetSource.sourceId,
-                {},
-                {
-                    dimensions: { width, height },
-                    frameRate,
-                    bitrate,
-                    windowFocus,
-                    highLightWidth,
-                    highLightColor,
-                    enableHighLight,
-                },
-            );
-        }
-        console.log('=======setupLocalVideo=====',viewEl);
-        const ret = engine?.setupLocalVideo({
-            sourceType: VideoSourceType.VideoSourceScreenPrimary,
-            renderMode: RenderModeType.RenderModeFit,
-            setupMode: VideoViewSetupMode.VideoViewSetupReplace,
-            view: viewEl,
-        });
-        console.log('setupLocalVideo===ret===',ret);
-    },
-
-    /**
-     * Step 3-2 (Optional): updateScreenCaptureParameters
-     */
-    updateScreenCaptureParameters () {
-        const { width, height, frameRate, bitrate, captureMouseCursor, windowFocus, excludeWindowList, highLightWidth, highLightColor, enableHighLight } = args;
-        engine?.updateScreenCaptureParameters({
-            dimensions: { width, height },
-            frameRate,
-            bitrate,
-            captureMouseCursor,
-            windowFocus,
-            excludeWindowList,
-            excludeWindowCount: excludeWindowList.length,
-            highLightWidth,
-            highLightColor,
-            enableHighLight,
-        });
-    },
-
-    /**
-     * Step 3-5: stopScreenCapture
-     */
-    stopScreenCapture() {
-        engine?.stopScreenCapture();
-    },
-    /**
-     * Step 4: leaveChannel
-     */
-    leaveChannel() {
-        engine?.leaveChannel();
-    },
-
-    /**
-     * Step 5: releaseRtcEngine
-     */
     releaseRtcEngine() {
-        engine?.unregisterEventHandler(this);
+        engine?.unregisterEventHandler(eventHandler);
         engine?.release();
+        engine = null;
+    },
+    async callEngine(apiName, ...args) {
+        if (!engine) {
+            throw Error('请先初始化engine');
+        }
+        if (!engine[apiName]) {
+            throw Error('engine.' + apiName + '不存在');
+        }
+        console.log('call agora engine===',apiName,args);
+        return engine[apiName].apply(engine, args);
     },
 
-    setScreenCaptureScenario(scenarioType){
-        engine?.setScreenCaptureScenario(scenarioType);
-    },
+};
 
-    onJoinChannelSuccess(connection, elapsed) {
-        console.log('onJoinChannelSuccess', 'connection', connection); 
-    },
-
-    onLeaveChannel(connection, stats) {
-        console.log('onLeaveChannel', 'connection', connection, 'stats', stats);
-     
-    },
-
-    onUserJoined(connection, remoteUid, elapsed) {
-        console.log('onUserJoined====',remoteUid);
-        // const { uid2 } = state;
-        // if (connection.localUid === uid2 || remoteUid === uid2) {
-        //     // ⚠️ mute the streams from screen sharing
-        //     engine?.muteRemoteAudioStream(uid2, true);
-        //     engine?.muteRemoteVideoStream(uid2, true);
-        //     return;
-        // }
-    },
-    onLocalVideoStateChanged(source, state, error) {
-        console.log('onLocalVideoStateChanged', 'source', source, 'state', state, 'error', error);
-    }
-}

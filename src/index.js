@@ -24,6 +24,7 @@ function createWindow() {
         width: 1024,
         height: 768,
         webPreferences: {
+            contextIsolation: true,
             nodeIntegration: true,
             partition: 'persist:diandianuser', // 持久化分区，数据会存储到磁盘,
             preload: path.join(__dirname, 'preload.js'), // 预加载脚本
