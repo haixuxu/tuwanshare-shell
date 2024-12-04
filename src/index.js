@@ -2,9 +2,13 @@
 
 // const { app, BrowserWindow } = require('electron')
 const { ipcMain } = require('electron');
+const { Menu } = require("electron");
 const { systemPreferences } = require('electron');
 const { app, protocol, BrowserWindow, session } = require('electron');
 const path = require('path');
+const pkg = require('../package.json');
+
+
 
 ipcMain.handle('ask-permission', async (event, arg) => {
     if (process.platform !== 'darwin') {
@@ -23,6 +27,7 @@ function createWindow() {
     const win = new BrowserWindow({
         width: 1024,
         height: 768,
+        "icon": "assets/tuwan.png",
         webPreferences: {
             contextIsolation: true,
             nodeIntegration: true,
@@ -46,7 +51,39 @@ function createWindow() {
     }
 }
 
+// 设置关于窗口的选项
+app.setAboutPanelOptions({
+    applicationName: '点点工具',
+    applicationVersion: '1.0.0',
+    copyright: '©2024 tuwan',
+    version: pkg.version,
+    website: 'https://y.tuwan.com',
+});
+
+
 app.whenReady().then(() => {
+    // 设置应用名称
+    app.setName(pkg.name);
+    // 创建菜单
+    const menuTemplate = [
+        {
+            label: '帮助',
+            submenu: [
+                {
+                    label: '关于',
+                    click: () => {
+                        // 在 macOS 上调用默认的关于窗口
+                        app.showAboutPanel();
+                    },
+                },
+            ],
+        },
+    ];
+
+    // 设置应用菜单
+    const menu = Menu.buildFromTemplate(menuTemplate);
+    Menu.setApplicationMenu(menu);
+    
     // 注册自定义协议
     // protocol.registerHttpProtocol("app", (request, callback) => {
     //   const url = request.url.replace("app://", "http://localhost:5173/");
