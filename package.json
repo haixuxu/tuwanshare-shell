@@ -23,7 +23,12 @@
     ],
     "asarUnpack": [
       "node_modules/agora-electron-sdk"
-    ]
+    ],
+    "win": {
+      "signingHashAlgorithms": ["sha256"],
+      "certificateFile": "./sign.pfx",
+      "certificatePassword": "csii2019"
+    }
   },
   
   "dependencies": {
