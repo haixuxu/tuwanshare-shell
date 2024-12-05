@@ -27,6 +27,7 @@
     "win": {
       "signingHashAlgorithms": ["sha256"],
       "certificateFile": "./sign.pfx",
+        "publisherName": "taole",
       "certificatePassword": "csii2019"
     }
   },
