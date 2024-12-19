@@ -1,5 +1,5 @@
 // This file is the entry point for the Electron application.
-
+const WindowManager = require('node-window-manager').windowManager;
 // const { app, BrowserWindow } = require('electron')
 const { ipcMain } = require('electron');
 const { Menu } = require("electron");
@@ -7,7 +7,6 @@ const { systemPreferences } = require('electron');
 const { app, protocol, BrowserWindow, session } = require('electron');
 const path = require('path');
 const pkg = require('../package.json');
-
 
 
 ipcMain.handle('ask-permission', async (event, arg) => {
@@ -19,6 +18,17 @@ ipcMain.handle('ask-permission', async (event, arg) => {
         return await systemPreferences.askForMediaAccess(arg.type);
     }
     return systemPreferences.getMediaAccessStatus(arg.type);
+});
+
+ipcMain.handle("getSourceProcessId",async (event,args)=>{
+    console.log(JSON.stringify(args));
+    const windows = WindowManager.getWindows();
+    for(var item of windows){
+        if(item.id===args.sourceId){
+            return item.processId;
+        }
+    }
+    return "";
 });
 
 
@@ -40,7 +50,8 @@ function createWindow() {
     if (process.env.NODE_ENV !== 'development') {
         // Load production build
         // win.loadFile(`${__dirname}/renderer/dist/index.html`);
-        win.loadURL(`https://y-test.tuwan.com/diandianele`);
+        win.loadURL(`http://192.168.3.198:5173/`);
+        win.webContents.openDevTools();
     } else {
         // Load vite dev server page
         console.log('Development mode');
@@ -62,27 +73,27 @@ app.setAboutPanelOptions({
 
 
 app.whenReady().then(() => {
-    // 设置应用名称
-    app.setName(pkg.name);
-    // 创建菜单
-    const menuTemplate = [
-        {
-            label: '帮助',
-            submenu: [
-                {
-                    label: '关于',
-                    click: () => {
-                        // 在 macOS 上调用默认的关于窗口
-                        app.showAboutPanel();
-                    },
-                },
-            ],
-        },
-    ];
+    // // 设置应用名称
+    // app.setName(pkg.name);
+    // // 创建菜单
+    // const menuTemplate = [
+    //     {
+    //         label: '帮助',
+    //         submenu: [
+    //             {
+    //                 label: '关于',
+    //                 click: () => {
+    //                     // 在 macOS 上调用默认的关于窗口
+    //                     app.showAboutPanel();
+    //                 },
+    //             },
+    //         ],
+    //     },
+    // ];
 
-    // 设置应用菜单
-    const menu = Menu.buildFromTemplate(menuTemplate);
-    Menu.setApplicationMenu(menu);
+    // // 设置应用菜单
+    // const menu = Menu.buildFromTemplate(menuTemplate);
+    // Menu.setApplicationMenu(menu);
     
     // 注册自定义协议
     // protocol.registerHttpProtocol("app", (request, callback) => {

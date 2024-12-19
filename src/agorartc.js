@@ -11,6 +11,9 @@ exports.agoraApi = {
     askPermission(arg) {
         return ipcRenderer.invoke('ask-permission', arg);
     },
+    getSourceProcessId(arg) {
+        return ipcRenderer.invoke('getSourceProcessId', arg);
+    },
     async initRtcEngine(opts) {
         engine = createAgoraRtcEngine();
         engine.initialize(opts);
