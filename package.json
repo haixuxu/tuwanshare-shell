@@ -1,6 +1,6 @@
 {
   "name": "diandian-share",
-  "version": "0.0.9",
+  "version": "0.0.11",
   "author": "xuxihai",
   "main": "./src/index.js",
   "icon": "assets/tuwan.png",
