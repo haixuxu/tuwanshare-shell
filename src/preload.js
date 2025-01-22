@@ -1,6 +1,8 @@
 const { contextBridge, ipcRenderer } = require('electron');
-const { agoraApi } = require('./agorartc');
+// const { agoraApi } = require('./agorartc');
+const diandianApi = require('./rpcapis/index');
 
 contextBridge.exposeInMainWorld('tuwanNapi', {
-    agoraApi: agoraApi,
+    // agoraApi: agoraApi,
+    diandianApi
 });

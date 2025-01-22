@@ -1,51 +1,36 @@
 // This file is the entry point for the Electron application.
 
 // const { app, BrowserWindow } = require('electron')
-const { ipcMain } = require('electron');
-const { Menu } = require("electron");
-const { systemPreferences } = require('electron');
+const { Menu } = require('electron');
 const { app, protocol, BrowserWindow, session } = require('electron');
 const path = require('path');
 const pkg = require('../package.json');
+require('./ipc');
 
-
-
-ipcMain.handle('ask-permission', async (event, arg) => {
-    if (process.platform !== 'darwin') {
-        return;
-    }
-    console.log('=====', arg);
-    if (systemPreferences.getMediaAccessStatus(arg.type) === 'not-determined') {
-        return await systemPreferences.askForMediaAccess(arg.type);
-    }
-    return systemPreferences.getMediaAccessStatus(arg.type);
-});
-
-
-
-function createWindow() {
+function createMainWindow() {
     const win = new BrowserWindow({
-        width: 1024,
-        height: 768,
-        "icon": "assets/tuwan.png",
+        width: 500,
+        height: 400,
+        frame: false,
+        icon: 'assets/tuwan.png',
         webPreferences: {
             contextIsolation: true,
-            nodeIntegration: true,
+            // nodeIntegration: true,
             partition: 'persist:diandianuser', // 持久化分区，数据会存储到磁盘,
             preload: path.join(__dirname, 'preload.js'), // 预加载脚本
         },
     });
 
-    require('./autocookie');
     if (process.env.NODE_ENV !== 'development') {
         // Load production build
         // win.loadFile(`${__dirname}/renderer/dist/index.html`);
-        win.loadURL(`https://y-test.tuwan.com/diandianele`);
+        win.loadURL(`https://y-test.tuwan.com/ddclient`);
     } else {
         // Load vite dev server page
         console.log('Development mode');
         // win.loadURL(`https://y-test.tuwan.com/diandianele`);
         win.loadURL('http://localhost:5173/');
+        // win.loadURL('http://192.168.3.198:5173/');
         // 打开 DevTools
         win.webContents.openDevTools();
     }
@@ -64,6 +49,9 @@ app.setAboutPanelOptions({
 app.whenReady().then(() => {
     // 设置应用名称
     app.setName(pkg.name);
+
+    require('./autocookie');
+
     // 创建菜单
     const menuTemplate = [
         {
@@ -80,10 +68,13 @@ app.whenReady().then(() => {
         },
     ];
 
-    // 设置应用菜单
-    const menu = Menu.buildFromTemplate(menuTemplate);
-    Menu.setApplicationMenu(menu);
-    
+    // // 设置应用菜单
+    // const menu = Menu.buildFromTemplate(menuTemplate);
+    // Menu.setApplicationMenu(menu);
+
+    // 隐藏默认菜单
+    Menu.setApplicationMenu(null);
+
     // 注册自定义协议
     // protocol.registerHttpProtocol("app", (request, callback) => {
     //   const url = request.url.replace("app://", "http://localhost:5173/");
@@ -91,10 +82,10 @@ app.whenReady().then(() => {
     //   callback({ url });
     // });
 
-    createWindow();
+    createMainWindow();
 
     app.on('activate', function () {
-        if (BrowserWindow.getAllWindows().length === 0) createWindow();
+        if (BrowserWindow.getAllWindows().length === 0) createMainWindow();
     });
 });
 

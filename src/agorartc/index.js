@@ -1,4 +1,4 @@
-const { ipcRenderer } = require('electron');
+
 const { ChannelProfileType, ClientRoleType, LocalVideoStreamState, VideoViewSetupMode, RenderModeType, ScreenCaptureSourceType, VideoSourceType, createAgoraRtcEngine } = require('agora-electron-sdk');
 const { eventHandler } = require("./events");
 
@@ -8,9 +8,7 @@ let engine = null;
 
 exports.agoraApi = {
     types: { ChannelProfileType, ClientRoleType, LocalVideoStreamState, VideoViewSetupMode, RenderModeType, ScreenCaptureSourceType, VideoSourceType },
-    askPermission(arg) {
-        return ipcRenderer.invoke('ask-permission', arg);
-    },
+ 
     async initRtcEngine(opts) {
         engine = createAgoraRtcEngine();
         engine.initialize(opts);
