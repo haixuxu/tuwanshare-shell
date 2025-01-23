@@ -25,7 +25,8 @@ function createMainWindow() {
     if (process.env.NODE_ENV !== 'development') {
         // Load production build
         // win.loadFile(`${__dirname}/renderer/dist/index.html`);
-        win.loadURL(`https://y-test.tuwan.com/ddclient`);
+        win.loadURL(`https://y-test.tuwan.com/ddshell`);
+        // win.webContents.openDevTools();
     } else {
         // Load vite dev server page
         console.log('Development mode');

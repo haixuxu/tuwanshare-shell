@@ -52,6 +52,9 @@ ipcMain.handle('createWindow', async (event, args) => {
         shell.openExternal(url);
         return { action: 'deny' };
     });
+    if(process.env.NODE_ENV==="development"){
+        win.webContents.openDevTools();
+    }
 });
 
 // 处理来自渲染进程的请求

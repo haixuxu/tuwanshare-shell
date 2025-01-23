@@ -1,12 +1,13 @@
 {
-  "name": "diandian-share",
+  "name": "diandian-shell",
   "version": "0.0.9",
   "author": "xuxihai",
   "main": "./src/index.js",
   "channelname": "taole",
   "icon": "assets/tuwan.png",
   "scripts": {
-    "start": "NODE_ENV=development electron src",
+    "start": "cross-env NODE_ENV=development electron src",
+    "start:remoteui": "electron src",
     "build": "electron-builder"
   },
   "devDependencies": {
@@ -15,8 +16,8 @@
     "prettier": "3.3.3"
   },
   "build": {
-    "appId": "com.tuwan.diandianshare",
-    "artifactName": "diandianshare-${version}-${os}-${arch}.${ext}",
+    "appId": "com.tuwan.diandianshell",
+    "artifactName": "diandianshell-${version}-${os}-${arch}.${ext}",
     "files": [
       "src/**/*",
       "assets/**/*",
@@ -42,6 +43,7 @@
   },
   "dependencies": {
     "agora-electron-sdk": "4.4.0",
+    "cross-env": "^7.0.3",
     "electron-updater": "^6.3.9",
     "promises-aplus-tests": "^2.1.2"
   }
