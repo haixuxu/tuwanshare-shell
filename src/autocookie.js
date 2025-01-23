@@ -6,10 +6,10 @@ const customSession = session.fromPartition('persist:diandianuser');
 const filter = {
     urls: ['*://*/*'], // 你可以指定要拦截的 URL
 };
-customSession.webRequest.onBeforeRequest(filter, (details, callback) => {
-    console.log('Request URL:', details.url);
-    callback({});
-});
+// customSession.webRequest.onBeforeRequest(filter, (details, callback) => {
+//     console.log('Request URL:', details.url);
+//     callback({});
+// });
 // session.defaultSession.webRequest.onBeforeRequest(filter, (details, callback) => {
 //   console.log('Request URL:', details.url);
 //   callback({});
@@ -29,7 +29,7 @@ customSession.webRequest.onBeforeSendHeaders((details, callback) => {
             if (cookieHeader) {
                 details.requestHeaders['Cookie'] = cookieHeader; // 设置 Cookie 头
             }
-            console.log('=====sendcookie==', baseUrl, ' \ncookie:', cookieHeader);
+            // console.log('=====sendcookie==', baseUrl, ' \ncookie:', cookieHeader);
 
             callback({ requestHeaders: details.requestHeaders });
         })
@@ -49,7 +49,7 @@ customSession.webRequest.onHeadersReceived((details, callback) => {
     }
     const setCookieHeaders = details.responseHeaders['Set-Cookie'] || details.responseHeaders['set-cookie'] || [];
 
-    console.log("=====readcookie==", baseUrl, " \ncookie:", setCookieHeaders);
+    // console.log("=====readcookie==", baseUrl, " \ncookie:", setCookieHeaders);
 
     setCookieHeaders.forEach((cookieString) => {
         const cookie = parseSetCookie(cookieString, baseUrl);

@@ -25,6 +25,7 @@ ipcMain.handle('getSourceProcessId', async (event, args) => {
 });
 
 ipcMain.handle('createWindow', async (event, args) => {
+    console.log('createWindow====',args);
     const windowOpts = args;
     const win = new BrowserWindow({
         width: windowOpts.width || 1024,

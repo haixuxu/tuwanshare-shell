@@ -1,10 +1,11 @@
 // This file is the entry point for the Electron application.
 
 // const { app, BrowserWindow } = require('electron')
-const { Menu } = require('electron');
+const { Menu, shell } = require('electron');
 const { app, protocol, BrowserWindow, session } = require('electron');
 const path = require('path');
 const pkg = require('../package.json');
+const checkUpdate = require('./update');
 require('./ipc');
 
 function createMainWindow() {
@@ -34,6 +35,9 @@ function createMainWindow() {
         // 打开 DevTools
         win.webContents.openDevTools();
     }
+    setTimeout(()=>{
+        checkUpdate(win);  // 检查更新
+    },3000);
 }
 
 // 设置关于窗口的选项

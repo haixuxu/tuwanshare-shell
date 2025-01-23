@@ -3,6 +3,7 @@
   "version": "0.0.9",
   "author": "xuxihai",
   "main": "./src/index.js",
+  "channelname": "taole",
   "icon": "assets/tuwan.png",
   "scripts": {
     "start": "NODE_ENV=development electron src",
@@ -21,18 +22,27 @@
       "assets/**/*",
       "package.json"
     ],
+    "copyright": "2014-2024 TaoLe Corporation,All Rights Reserved",
+    "asar": true,
+    "publish": {
+      "provider": "generic",
+      "url": "https://apk.tuwan.com/app/ddclient/upgrade/exe/"
+    },
     "asarUnpack": [
       "node_modules/agora-electron-sdk"
     ],
     "win": {
-      "signingHashAlgorithms": ["sha256"],
+      "signingHashAlgorithms": [
+        "sha256"
+      ],
       "certificateFile": "./sign.pfx",
-        "publisherName": "taole",
+      "publisherName": "taole",
       "certificatePassword": "csii2019"
     }
   },
-  
   "dependencies": {
-    "agora-electron-sdk": "4.4.0"
+    "agora-electron-sdk": "4.4.0",
+    "electron-updater": "^6.3.9",
+    "promises-aplus-tests": "^2.1.2"
   }
 }
