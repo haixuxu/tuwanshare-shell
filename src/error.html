@@ -1,0 +1,74 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加载失败</title>
+    <style>
+        *{
+            margin:0;
+            padding: 0;
+        }
+        .topheader{
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              display: flex;
+              justify-content: space-between;
+          }
+        .drag {
+            flex: 1 0 auto;
+            height: 40px;
+            cursor: pointer;
+        }
+
+        .closebtn {
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #errorpage{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .drag {
+        -webkit-app-region: drag;
+        }
+    </style>
+</head>
+<body>
+    <div id="errorpage">
+        <div class="topheader">
+            <div class="drag"></div>
+            <div class="closebtn">
+                <i title="退出" id="closebtn" style="cursor:poioter">
+                    <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </i>
+            </div>
+        </div>
+        <div class="qrcode-wraper">
+            应用加载失败，请检查网络连接
+        </div>
+    </div>
+    <script>
+
+        document.getElementById("closebtn").addEventListener("click",function(){
+            window.tuwanNapi&& window.tuwanNapi.diandianApi.windowControls("close");
+        });
+    </script>
+</body>
+</html>

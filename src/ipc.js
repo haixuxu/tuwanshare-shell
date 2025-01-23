@@ -1,5 +1,7 @@
 const { ipcMain, BrowserWindow, shell,screen } = require('electron');
 const { Menu } = require('electron');
+const WindowManager = require("node-window-manager").windowManager;
+
 const path = require('path');
 const { systemPreferences } = require('electron');
 
@@ -15,12 +17,12 @@ ipcMain.handle('ask-permission', async (event, arg) => {
 });
 ipcMain.handle('getSourceProcessId', async (event, args) => {
     // console.log(JSON.stringify(args));
-    // const windows = WindowManager.getWindows();
-    // for(var item of windows){
-    //     if(item.id===args.sourceId){
-    //         return item.processId;
-    //     }
-    // }
+    const windows = WindowManager.getWindows();
+    for(var item of windows){
+        if(item.id===args.sourceId){
+            return item.processId;
+        }
+    }
     return '';
 });
 
@@ -55,6 +57,11 @@ ipcMain.handle('createWindow', async (event, args) => {
     if(process.env.NODE_ENV==="development"){
         win.webContents.openDevTools();
     }
+    win.webContents.on('did-fail-load', (event, errorCode, errorDescription, validatedURL) => {
+        console.error(`Failed to load: ${validatedURL}. Error: ${errorDescription}`);
+        // 这里只是一种处理方式，可以根据需要重定向或处理错误
+        win.loadURL('file://' + __dirname + '/error.html');
+    });
 });
 
 // 处理来自渲染进程的请求

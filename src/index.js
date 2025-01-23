@@ -31,11 +31,16 @@ function createMainWindow() {
         // Load vite dev server page
         console.log('Development mode');
         // win.loadURL(`https://y-test.tuwan.com/diandianele`);
-        win.loadURL('http://localhost:5173/');
-        // win.loadURL('http://192.168.3.198:5173/');
+        // win.loadURL('http://localhost:5173/');
+        win.loadURL('http://192.168.3.198:5173/');
         // 打开 DevTools
         win.webContents.openDevTools();
     }
+    win.webContents.on('did-fail-load', (event, errorCode, errorDescription, validatedURL) => {
+        console.error(`Failed to load: ${validatedURL}. Error: ${errorDescription}`);
+        // 这里只是一种处理方式，可以根据需要重定向或处理错误
+        win.loadURL('file://' + __dirname + '/error.html');
+    });
     setTimeout(()=>{
         checkUpdate(win);  // 检查更新
     },3000);
