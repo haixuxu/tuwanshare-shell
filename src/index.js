@@ -31,8 +31,8 @@ function createMainWindow() {
         // Load vite dev server page
         console.log('Development mode');
         // win.loadURL(`https://y-test.tuwan.com/diandianele`);
-        win.loadURL('http://localhost:5173/');
-        // win.loadURL('http://192.168.3.198:5173/');
+        // win.loadURL('http://localhost:5173/');
+        win.loadURL('http://192.168.3.198:5173/');
         // 打开 DevTools
         win.webContents.openDevTools();
     }

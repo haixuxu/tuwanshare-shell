@@ -45,6 +45,6 @@
     "agora-electron-sdk": "4.4.0",
     "cross-env": "^7.0.3",
     "electron-updater": "^6.3.9",
-    "promises-aplus-tests": "^2.1.2"
+    "node-window-manager": "^2.2.4"
   }
 }
