@@ -1,5 +1,4 @@
 const { ipcMain, BrowserWindow, shell,screen } = require('electron');
-const WindowManager = require('node-window-manager').windowManager;
 const { Menu } = require('electron');
 const path = require('path');
 const { systemPreferences } = require('electron');
@@ -16,12 +15,12 @@ ipcMain.handle('ask-permission', async (event, arg) => {
 });
 ipcMain.handle('getSourceProcessId', async (event, args) => {
     // console.log(JSON.stringify(args));
-    const windows = WindowManager.getWindows();
-    for(var item of windows){
-        if(item.id===args.sourceId){
-            return item.processId;
-        }
-    }
+    // const windows = WindowManager.getWindows();
+    // for(var item of windows){
+    //     if(item.id===args.sourceId){
+    //         return item.processId;
+    //     }
+    // }
     return '';
 });
 
