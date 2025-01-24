@@ -1,4 +1,4 @@
-const { ipcRenderer, BrowserWindow } = require('electron');
+const { ipcRenderer, BrowserWindow, shell } = require('electron');
 
 const path = require('path');
 const package = require('../../package.json');
@@ -19,6 +19,11 @@ exports.createWindow = function (args) {
 exports.resizeWindow = function (args) {
     // 调整窗口大小
     return ipcRenderer.invoke('resizeWindow', args);
+};
+
+exports.browserOpen = function (args) {
+    //页面外跳事件
+    return shell.openExternal(args.url);
 };
 
 exports.getPkgJson = function () {

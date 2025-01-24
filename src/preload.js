@@ -1,7 +1,17 @@
 const { contextBridge, ipcRenderer } = require('electron');
-const { agoraApi } = require('./agorartc');
+const os = require('os');
 const diandianApi = require('./rpcapis/index');
 
+let agoraApi;
+
+if (os.platform() === 'linux') {
+    console.log('当前操作系统是 Linux');
+    agoraApi = {message:"unimplement!",types:{},initRtcEngine:function(){
+        throw Error("Linux平台不支持!")
+    }};
+}else{
+    agoraApi = require("./agorartc").agoraApi;
+}
 const eventHandlers = {};
 
 ipcRenderer.on('global-event', (event, data) => {

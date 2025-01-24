@@ -41,6 +41,12 @@ function createMainWindow() {
         // 这里只是一种处理方式，可以根据需要重定向或处理错误
         win.loadURL('file://' + __dirname + '/error.html');
     });
+    win.webContents.setWindowOpenHandler(({ url }) => {
+        console.log("================url=====",url)
+        shell.openExternal(url);
+        return { action: 'deny' };
+
+    })
     setTimeout(()=>{
         checkUpdate(win);  // 检查更新
     },3000);
